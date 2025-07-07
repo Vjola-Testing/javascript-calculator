@@ -364,48 +364,39 @@ document.addEventListener('keyup', keyReleased);
 
 // function to capture keydown events
 function keyPressed(e) {
-    e.preventDefault()
     var equal = document.getElementById("equal_sign").value;
-    var dot = document.getElementById("dot").value;
-
-    if (e.key == "Delete"){
-        button_clear();
+    box = document.getElementById("box");
+    
+    if (e.key == "Delete" || e.key == "Backspace"){
+        backspace_remove();
         return;
     }
 
-    var isNumber = isFinite(e.key);
-    var enterPress;
-    var dotPress;
-    var commaPress = false;
-
-    if (e.key == "Enter"){
-        enterPress = equal;
-    }
-    if (e.key == "."){
-        dotPress = dot;
-    }
-    if (e.key == ","){
-        commaPress = true;
+    if ((e.key >= 0 && e.key <= 9) || e.key == "+" || e.key == "-" || e.key == "*" || e.key == "/" || e.key == "=" || e.key == "Enter" || e.key == "."){
+        button_number(e.key)
     }
     
-    if (isNumber || operators.includes(e.key) || e.key == "Enter" || e.key == dotPress || 
-        commaPress || e.key == "Backspace"){
-        if (e.key == "Enter"){
-            button_number(enterPress)
-        }
-        else if (e.key == "Backspace"){
-            document.getElementById("backspace_btn").style.backgroundColor  = "#999999";
-            backspace_remove()
-        }
-        else if (commaPress){
-            button_number(dot)
-        }
-        else {
-            button_number(e.key) 
-        }   
+    // New keyboard shortcuts
+    if (e.key == "%") {
+        calculate_percentage();
     }
-    if (e.key) {
-        key_combination[e.code] = e.key;
+    if (e.key == "@" || (e.shiftKey && e.key == "2")) { // @ or Shift+2 for square
+        power_of();
+    }
+    if (e.key == "r" || e.key == "R") { // 'r' for square root
+        square_root();
+    }
+    if (e.key == "c" || e.key == "C") {
+        button_clear();
+    }
+    if (e.key == "Escape") {
+        clear_entry();
+    }
+
+    // Prevent default behavior for these keys
+    if (["%", "@", "r", "R", "c", "C", "Escape"].includes(e.key) || 
+        (e.shiftKey && e.key == "2")) {
+        e.preventDefault();
     }
 }
 
