@@ -367,6 +367,34 @@ function keyPressed(e) {
     var equal = document.getElementById("equal_sign").value;
     box = document.getElementById("box");
     
+    // Add scientific calculator keyboard shortcuts
+    if (e.ctrlKey && !e.shiftKey) {  // Ctrl + key combinations
+        switch(e.key.toLowerCase()) {
+            case 's':  // Ctrl + S for sin
+                calculateSin();
+                e.preventDefault();
+                return;
+            case 'c':  // Ctrl + C for cos
+                calculateCos();
+                e.preventDefault();
+                return;
+            case 't':  // Ctrl + T for tan
+                calculateTan();
+                e.preventDefault();
+                return;
+            case 'l':  // Ctrl + L for log
+                calculateLog();
+                e.preventDefault();
+                return;
+        }
+    }
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {  // Ctrl + Shift + L for natural log
+        calculateLn();
+        e.preventDefault();
+        return;
+    }
+
+    // Existing keyboard handling code
     if (e.key == "Delete" || e.key == "Backspace"){
         backspace_remove();
         return;
@@ -424,5 +452,87 @@ function keyReleased(e){
     // set the color of the backspace button back to its original
     if (e.key == "Backspace"){
         document.getElementById("backspace_btn").style.backgroundColor  = "#666666";
+    }
+}
+
+// Scientific calculator functions
+function calculateSin() {
+    box = document.getElementById("box");
+    var num = parseFloat(box.innerText);
+    try {
+        // Convert to radians and calculate
+        var result = Math.sin(num * Math.PI / 180);
+        // Format for better display
+        result = parseFloat(result.toPrecision(12));
+        box.innerText = result;
+    } catch (error) {
+        console.error("Sin calculation error:", error);
+        box.innerText = "ERROR";
+    }
+}
+
+function calculateCos() {
+    box = document.getElementById("box");
+    var num = parseFloat(box.innerText);
+    try {
+        // Convert to radians and calculate
+        var result = Math.cos(num * Math.PI / 180);
+        // Format for better display
+        result = parseFloat(result.toPrecision(12));
+        box.innerText = result;
+    } catch (error) {
+        console.error("Cos calculation error:", error);
+        box.innerText = "ERROR";
+    }
+}
+
+function calculateTan() {
+    box = document.getElementById("box");
+    var num = parseFloat(box.innerText);
+    try {
+        // Convert to radians and calculate
+        var result = Math.tan(num * Math.PI / 180);
+        // Format for better display
+        result = parseFloat(result.toPrecision(12));
+        box.innerText = result;
+    } catch (error) {
+        console.error("Tan calculation error:", error);
+        box.innerText = "ERROR";
+    }
+}
+
+function calculateLog() {
+    box = document.getElementById("box");
+    var num = parseFloat(box.innerText);
+    if (num <= 0) {
+        box.innerText = "Invalid input";
+        return;
+    }
+    try {
+        var result = Math.log10(num);
+        // Format for better display
+        result = parseFloat(result.toPrecision(12));
+        box.innerText = result;
+    } catch (error) {
+        console.error("Log calculation error:", error);
+        box.innerText = "ERROR";
+    }
+}
+
+function calculateLn() {
+    box = document.getElementById("box");
+    var num = parseFloat(box.innerText);
+    if (num <= 0) {
+        box.innerText = "Invalid input";
+        return;
+    }
+    try {
+        var result = Math.log(num);
+        // Format for better display
+        result = parseFloat(result.toPrecision(12));
+        box.innerText = result;
+    } catch (error) {
+        console.error("Natural log calculation error:", error);
+        box.innerText = "ERROR";
     }
 }
