@@ -5,6 +5,7 @@ var last_operation_history = null;
 var operator = null;
 var equal = null;
 var dot = null;
+var memory_value = 0;
 
 var firstNum = true;
 
@@ -359,6 +360,27 @@ function clear_entry(){
     }
 }
 
+// Add new memory operation functions
+function memory_add() {
+    box = document.getElementById("box");
+    memory_value += parseFloat(box.innerText);
+}
+
+function memory_subtract() {
+    box = document.getElementById("box");
+    memory_value -= parseFloat(box.innerText);
+}
+
+function memory_recall() {
+    box = document.getElementById("box");
+    box.innerText = memory_value;
+    firstNum = false;
+}
+
+function memory_clear() {
+    memory_value = 0;
+}
+
 document.addEventListener('keydown', keyPressed);
 document.addEventListener('keyup', keyReleased);
 
@@ -372,6 +394,24 @@ function keyPressed(e) {
         return;
     }
 
+    // Add memory operation keyboard shortcuts
+    if (e.key == "p" || e.key == "P") { // M+
+        memory_add();
+        return;
+    }
+    if (e.key == "m" || e.key == "M") { // M-
+        memory_subtract();
+        return;
+    }
+    if (e.key == "r" || e.key == "R") { // MR
+        memory_recall();
+        return;
+    }
+    if (e.key == "l" || e.key == "L") { // MC
+        memory_clear();
+        return;
+    }
+
     if ((e.key >= 0 && e.key <= 9) || e.key == "+" || e.key == "-" || e.key == "*" || e.key == "/" || e.key == "=" || e.key == "Enter" || e.key == "."){
         button_number(e.key)
     }
@@ -382,9 +422,6 @@ function keyPressed(e) {
     }
     if (e.key == "@" || (e.shiftKey && e.key == "2")) { // @ or Shift+2 for square
         power_of();
-    }
-    if (e.key == "r" || e.key == "R") { // 'r' for square root
-        square_root();
     }
     if (e.key == "c" || e.key == "C") {
         button_clear();
