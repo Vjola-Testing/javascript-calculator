@@ -185,34 +185,73 @@ function showSelectedOperator(){
     }
 }
 
-// function to calculate the result using two number and an operator
-function calculate(num1, num2, operator){
+// Add error handling utilities
+function showError(message) {
+    box = document.getElementById("box");
+    box.innerText = message;
+    firstNum = true;
+}
 
-    if (operator === "+"){
-        total = (parseFloat)(num1)+(parseFloat)(num2)
+function isValidNumber(num) {
+    return !isNaN(num) && isFinite(num) && Math.abs(num) <= 1e15;
+}
+
+// Update calculate function with better error handling
+function calculate(num1, num2, operator) {
+    // Convert strings to numbers and validate
+    num1 = parseFloat(num1);
+    num2 = parseFloat(num2);
+    
+    if (!isValidNumber(num1) || !isValidNumber(num2)) {
+        showError("ERROR");
+        return 0;
     }
-    else if (operator === "-"){
-        total = (parseFloat)(num1)-(parseFloat)(num2)
-    }
-    else if (operator === "*"){
-        total = (parseFloat)(num1)*(parseFloat)(num2)
-    }
-    else if (operator === "/"){
-        total = (parseFloat)(num1)/(parseFloat)(num2)
-    }
-    else {
-        if (total == box.innerText){
-            return total
+
+    try {
+        if (operator === "+") {
+            total = num1 + num2;
+        }
+        else if (operator === "-") {
+            total = num1 - num2;
+        }
+        else if (operator === "*") {
+            total = num1 * num2;
+        }
+        else if (operator === "/") {
+            if (num2 === 0) {
+                showError("Cannot divide by zero");
+                return 0;
+            }
+            total = num1 / num2;
         }
         else {
-            return box.innerText
+            if (total == box.innerText) {
+                return total;
+            }
+            else {
+                return box.innerText;
+            }
         }
+
+        // Check for overflow
+        if (!isValidNumber(total)) {
+            showError("Overflow");
+            return 0;
+        }
+
+        // Format decimal places only if needed
+        if (!Number.isInteger(total)) {
+            // Use a more precise approach for decimal places
+            let rounded = parseFloat(total.toPrecision(12));
+            // Only use the rounded value if it's different from the total
+            total = Math.abs(rounded - total) < 1e-10 ? rounded : total;
+        }
+        return total;
+    } catch (error) {
+        console.error("Calculation error:", error);
+        showError("ERROR");
+        return 0;
     }
-    // if total is not integer, show maximum 12 decimal places
-    if (!Number.isInteger(total)){
-        total = total.toPrecision(12);
-    }
-    return parseFloat(total);
 }
 
 // function to clear box and reset everything
@@ -289,60 +328,84 @@ function plus_minus(){
 }
 
 // function to calculate square root of the number currently on screen
-function square_root(){
+function square_root() {
     box = document.getElementById("box");
-    var square_num = Math.sqrt(box.innerText)
-    box.innerText = square_num
-    numbers.push(square_num)
+    var num = parseFloat(box.innerText);
+    
+    if (num < 0) {
+        showError("Invalid input");
+        return;
+    }
+    
+    try {
+        var result = Math.sqrt(num);
+        if (!isValidNumber(result)) {
+            showError("Overflow");
+            return;
+        }
+        box.innerText = result;
+    } catch (error) {
+        console.error("Square root error:", error);
+        showError("ERROR");
+    }
 }
 
 // function to calculate the division of 1 with the number currently on screen
-function division_one(){
+function division_one() {
     box = document.getElementById("box");
-    var square_num = 1/box.innerText
-    box.innerText = square_num
-    numbers.push(square_num)
+    var num = parseFloat(box.innerText);
+    
+    if (num === 0) {
+        showError("Cannot divide by zero");
+        return;
+    }
+    
+    try {
+        var result = 1 / num;
+        if (!isValidNumber(result)) {
+            showError("Overflow");
+            return;
+        }
+        box.innerText = result;
+    } catch (error) {
+        console.error("Division error:", error);
+        showError("ERROR");
+    }
 }
 
 // function to calculate the power of the number currently on screen
-function power_of(){
+function power_of() {
     box = document.getElementById("box");
-    var square_num =Math.pow(box.innerText, 2)
-    box.innerText = square_num
-    numbers.push(square_num)
+    var num = parseFloat(box.innerText);
+    
+    try {
+        var result = Math.pow(num, 2);
+        if (!isValidNumber(result)) {
+            showError("Overflow");
+            return;
+        }
+        box.innerText = result;
+    } catch (error) {
+        console.error("Power calculation error:", error);
+        showError("ERROR");
+    }
 }
 
 // function to calculate the percentage of a number
-function calculate_percentage(){
-    var elements = document.getElementsByClassName("operator");
+function calculate_percentage() {
     box = document.getElementById("box");
-
-    if (numbers.length > 0 && typeof last_operator != "undefined"){
-
-        var perc_value = ((box.innerText / 100) * numbers[0])
-        if (!Number.isInteger(perc_value)) {
-            perc_value = perc_value.toFixed(2);
-        }
-        box.innerText = perc_value
-        numbers.push(box.innerText)
+    var num = parseFloat(box.innerText);
     
-        // append second number to history
-        if (!last_operation_history.innerText.includes("=")){
-            last_operation_history.innerText += " " + numbers[1] + " ="
+    try {
+        var result = num / 100;
+        if (!isValidNumber(result)) {
+            showError("Overflow");
+            return;
         }
-    }
-    else {
-        box.innerText = box.innerText/100
-    }
-
-    numbers.push(box.innerText)
-    var res = calculate(numbers[0], numbers[1], last_operator)
-    box.innerText = res
-    operator_value = "="
-
-    // deselect operator if any selected
-    for (var i=0; i<elements.length; i++){
-        elements[i].style.backgroundColor  = "#e68a00";
+        box.innerText = result;
+    } catch (error) {
+        console.error("Percentage calculation error:", error);
+        showError("ERROR");
     }
 }
 
